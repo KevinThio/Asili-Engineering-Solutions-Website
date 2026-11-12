@@ -48,8 +48,8 @@ If a task seems to need something on this list, stop and ask.
 | Runtime | **Node.js 26** (minimum 22.23.4) | Pinned in `.nvmrc` and `netlify.toml`. |
 | Framework | **Astro 7** + TypeScript 6 | Static output. Ship as little JavaScript as possible. TypeScript stays on 6 because `@astrojs/check` does not support 7 yet. |
 | Components | **React 19**, as Astro islands | Ported from the ASILI Design System (written for React 18; plain function components that run unchanged on 19). Render static by default; hydrate only what must be interactive. |
-| Styling | Design system `tokens.css` + `bundle.css` | Plain CSS custom properties. **No Tailwind, no CSS-in-JS library, no UI kit.** |
-| Icons | `astro-icon` with Lucide, plus a local WhatsApp SVG | Icons are inlined at build time. Never fetch icons from a CDN at runtime. |
+| Styling | Design system `tokens.css` + `bundle.css` + `components.css` | Plain CSS custom properties. **No Tailwind, no CSS-in-JS library, no UI kit.** |
+| Icons | Lucide (`@iconify-json/lucide`), plus a local WhatsApp SVG | `scripts/icons.mjs` copies only the icons we use into `src/components/icon-data.ts`; the `Icon` component inlines them as SVG. Never fetch icons from a CDN at runtime. |
 | Fonts | Barlow and Barlow Semi Condensed, self-hosted (Fontsource) | No runtime request to Google Fonts. |
 | Images | Astro `<Image>` / `astro:assets` | Every photo resized and compressed at build. |
 | Enquiry form | **Netlify Forms** | Emails the owner; submissions kept in Netlify as the backup "Enquiries" table. |
@@ -76,7 +76,7 @@ The scaffold exists (config, a placeholder `src/pages/index.astro`, `tests/`, CI
     ├── assets/
     │   ├── logo.svg, logo-mark.svg
     │   └── projects/           project photos uploaded through the CMS
-    ├── components/             React components ported from the design system (one file each)
+    ├── components/             React components ported from the design system (one file each), plus icon-data.ts (generated)
     ├── content/
     │   ├── config.ts           content collection schemas
     │   └── projects/           one Markdown file per completed project
@@ -91,7 +91,8 @@ The scaffold exists (config, a placeholder `src/pages/index.astro`, `tests/`, CI
     │   └── thanks.astro        "We received your enquiry" (form success redirect)
     └── styles/
         ├── tokens.css          copied from the design system; generated, never edit by hand
-        └── global.css          the design system's bundle.css (fonts, base rules, type scale)
+        ├── global.css          the design system's bundle.css (fonts, base rules, type scale)
+        └── components.css      the components' styles, ported from their inline styles so they work without JavaScript
 ```
 
 ## 5. Data
@@ -188,6 +189,7 @@ Requires Node.js 22.23.4 or newer (the project uses 26; see `.nvmrc`). Keep this
 | `npm run build` | Production build into `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run check` | `astro check` (types and templates) |
+| `npm run icons` | Regenerate `src/components/icon-data.ts` after adding an icon name to `scripts/icons.mjs` |
 | `npm test` | Playwright tests on a phone (Pixel 7) and desktop Chrome; builds and serves the site first. First run on a machine: `npx playwright install chromium` |
 
 Tests live in `tests/`. Every page gets at least a load test and a no-horizontal-scroll test; the enquiry form also gets "empty submit shows errors" and "valid submit reaches We received your enquiry".
