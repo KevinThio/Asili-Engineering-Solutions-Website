@@ -13,7 +13,7 @@ const NAMES = [
   'loader-circle', 'mail', 'map-pin', 'menu', 'phone', 'ruler', 'smartphone', 'sprout',
   'triangle-alert', 'wrench', 'x',
   // Used by pages
-  'badge-check', 'droplets', 'graduation-cap', 'send', 'shield-check', 'sun', 'zap',
+  'badge-check', 'droplets', 'graduation-cap', 'rotate-ccw', 'send', 'shield-check', 'sun', 'zap',
 ];
 
 const requireFromHere = createRequire(import.meta.url);

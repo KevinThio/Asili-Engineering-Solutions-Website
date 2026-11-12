@@ -1,0 +1,111 @@
+---
+// Enquiry form (spec screen 3; mockup "Enquiry").
+// A real Netlify form: it works with JavaScript turned off. src/scripts/enquiry.ts only enhances it
+// (the mockup's inline messages, sending without leaving the page, picking the service from ?service=).
+import { Alert } from '../components/Alert';
+import { Button } from '../components/Button';
+import { Card } from '../components/Card';
+import { Icon } from '../components/Icon';
+import { ServicePicker } from '../components/ServicePicker';
+import { TextArea } from '../components/TextArea';
+import { TextField } from '../components/TextField';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { FORM_NAME, PHONE_PATTERN } from '../data/enquiry';
+import { telHref, whatsappHref } from '../data/site';
+---
+<BaseLayout
+  title="Send an enquiry"
+  description="Tell ASILI what you need in four quick questions: the service, your name, your phone number and the problem. Or call or WhatsApp us."
+  current="enquiry"
+>
+  <section class="enquiry">
+    <div class="page page--form">
+      <div class="intro">
+        <p class="eyebrow section__eyebrow">Send an enquiry</p>
+        <h1 class="enquiry__title">Tell us what you need</h1>
+        <p class="enquiry__lead">Four quick questions. An engineer will call you back.</p>
+      </div>
+
+      <Card elevated padding={28}>
+        <form
+          id="enquiry-form"
+          name={FORM_NAME}
+          method="POST"
+          action="/thanks"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="enquiry__form"
+        >
+          <input type="hidden" name="form-name" value={FORM_NAME} />
+          <p class="visually-hidden" aria-hidden="true">
+            <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
+
+          <div id="form-error" hidden tabindex="-1">
+            <Alert tone="error" title="Something is missing">Fill in the fields marked in red, then send again.</Alert>
+          </div>
+          <div id="send-error" hidden tabindex="-1">
+            <Alert tone="error" title="Your enquiry was not sent">
+              Check your connection and send again, or call or WhatsApp us instead.
+            </Alert>
+          </div>
+
+          <ServicePicker id="service" name="service" label="1. What do you need?" required />
+          <TextField id="name" name="name" label="2. Your name" autoComplete="name" required maxLength={120} />
+          <TextField
+            id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required
+            label="3. Phone number" hint="We will call you on this number" placeholder="07XX XXX XXX"
+            pattern={PHONE_PATTERN} maxLength={20}
+          />
+          <TextArea
+            id="problem" name="problem" label="4. Tell us about the problem" rows={4} required maxLength={2000}
+            hint="For a pump: its size, and how deep or far the water is"
+          />
+          <Button size="lg" type="submit" iconRight="send" fullWidth>Send enquiry</Button>
+        </form>
+      </Card>
+
+      <Card tone="field" padding={20}>
+        <div class="talk">
+          <p>Rather talk? Call or WhatsApp us.</p>
+          <div class="talk__actions">
+            <Button variant="outline" iconLeft="phone" href={telHref()}>Call</Button>
+            <Button variant="outline" iconLeft="whatsapp" href={whatsappHref()}>WhatsApp us</Button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  </section>
+
+  <!-- Icons the script puts in front of messages -->
+  <template id="icon-error"><Icon name="circle-alert" size={16} /></template>
+</BaseLayout>
+
+<script>
+  import '../scripts/enquiry';
+</script>
+
+<style>
+  .enquiry { padding: var(--space-12) 0 72px; }
+  .enquiry .page { display: flex; flex-direction: column; gap: var(--space-6); }
+  .intro { display: flex; flex-direction: column; gap: 10px; }
+  .intro .section__eyebrow { margin: 0; }
+  .enquiry__title { font: var(--weight-bold) clamp(34px, 4vw, var(--text-4xl))/var(--leading-tight) var(--font-display); }
+  .enquiry__lead { color: var(--ink-700); }
+  .enquiry__form { display: flex; flex-direction: column; gap: 22px; }
+  .enquiry__form [tabindex="-1"]:focus { outline: none; box-shadow: none; }
+
+  .talk { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; }
+  .talk p { font: var(--weight-semibold) var(--text-md)/1.4 var(--font-body); color: var(--ink-900); }
+  .talk__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  @media (max-width: 599.98px) {
+    .enquiry { padding-top: var(--space-8); }
+    .enquiry .page :global(.a-card) { padding: var(--space-5) !important; }
+  }
+</style>

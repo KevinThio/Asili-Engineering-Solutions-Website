@@ -180,8 +180,9 @@
 /* ── TextField / TextArea / Select (shared Field) ── */
 .a-field{display:flex;flex-direction:column;gap:6px}
 .a-field__label{font:var(--type-label);color:var(--ink-900)}
-.a-field__msg{display:flex;gap:6px;align-items:center;font:var(--type-body-sm);color:var(--text-muted)}
+.a-field__msg{display:flex;gap:6px;align-items:flex-start;font:var(--type-body-sm);color:var(--text-muted)}
 .a-field__msg[hidden]{display:none}
+.a-field__msg .a-icon{margin-top:4px}
 .a-field__msg--error{color:var(--error-700)}
 .a-field__msg--warning{color:var(--warning-700)}
 .a-input{
@@ -202,7 +203,8 @@
 .a-picker{border:0;margin:0;padding:0;min-width:0;display:flex;flex-direction:column;gap:8px}
 .a-picker:disabled{opacity:.6}
 .a-picker__legend{font:var(--type-label);color:var(--ink-900);padding:0;margin-bottom:6px}
-.a-picker__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+/* DS used minmax(200px): in the 680px form that made 3 cramped columns. 240px gives the intended 2 (1 on phones). */
+.a-picker__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px}
 .a-picker--one .a-picker__grid{grid-template-columns:1fr}
 .a-picker__option{
   position:relative;display:flex;align-items:center;gap:12px;min-height:64px;padding:10px 14px;cursor:pointer;
