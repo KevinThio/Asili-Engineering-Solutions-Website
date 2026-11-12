@@ -1,0 +1,91 @@
+---
+// Every page: <head>, SiteHeader, SiteFooter and, on phones, the fixed Call/WhatsApp bar.
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/components.css';
+import { ContactBar } from '../components/ContactBar';
+import { SiteFooter } from '../components/SiteFooter';
+import { SiteHeader } from '../components/SiteHeader';
+import { NAV_LINKS, type PageId } from '../data/nav';
+import { site } from '../data/site';
+
+interface Props {
+  /** Unique per page. " · ASILI Engineering Solutions" is added unless it already names ASILI. */
+  title: string;
+  /** Unique meta description, about 150 characters */
+  description: string;
+  /** Which nav link is the current page */
+  current?: PageId;
+  /** Keep the page out of search results (e.g. the thank-you page) */
+  noindex?: boolean;
+}
+
+const { title, description, current, noindex = false } = Astro.props;
+const fullTitle = title.includes('ASILI') ? title : `${title} · ${site.shortName}`;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#1E3A17" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="en_KE" />
+    {canonical && <meta property="og:url" content={canonical} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader links={NAV_LINKS} current={current} tel={site.tel} whatsapp={site.whatsapp} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <SiteFooter
+      contacts={site.contacts}
+      whatsappLabel={site.whatsappLabel}
+      whatsapp={site.whatsapp}
+      email={site.email}
+      location={site.branches.join(' · ')}
+      registration={site.registration}
+      tagline={site.tagline}
+      links={NAV_LINKS}
+    />
+    <ContactBar tel={site.tel} whatsapp={site.whatsapp} className="site-contactbar" />
+  </body>
+</html>
+
+<style is:global>
+  /* Phones and tablets: the Call/WhatsApp bar is fixed at the bottom, so leave room for it.
+     From 860px the header shows Call and WhatsApp itself (same breakpoint as SiteHeader).
+     69px = the bar's height: 48px buttons + 10px padding top and bottom + 1px border (ContactBar).
+     The footer takes that space so the forest green runs to the bottom of the screen. */
+  body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+  main { flex: 1; }
+  body > footer { padding-bottom: calc(69px + env(safe-area-inset-bottom)); }
+  @media (min-width: 860px) {
+    body > footer { padding-bottom: 0; }
+    .site-contactbar { display: none; }
+  }
+  main:focus { outline: none; box-shadow: none; }
+
+  .skip-link {
+    position: absolute; left: var(--space-2); top: var(--space-2); z-index: 40;
+    padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+    background: var(--white); color: var(--forest-900); font: var(--type-label);
+    transform: translateY(-200%);
+  }
+  .skip-link:focus { transform: none; }
+
+  /* Page building blocks shared by every screen */
+  .page { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--page-gutter); }
+  .page--form { max-width: calc(var(--content-max) + 2 * var(--page-gutter)); }
+</style>

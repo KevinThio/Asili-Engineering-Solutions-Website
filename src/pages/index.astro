@@ -1,19 +1,15 @@
 ---
 // Placeholder until feat/home-page replaces it.
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>ASILI Engineering Solutions</title>
-  </head>
-  <body>
-    <main>
-      <h1>ASILI Engineering Solutions</h1>
-      <p>Our new website is being built.</p>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title="ASILI Engineering Solutions"
+  description="Licensed electrical engineers in Nairobi, Nakuru and Eldoret. Solar for farm irrigation pumps, homes and businesses: sized, protected, tested and commissioned."
+  current="home"
+  noindex
+>
+  <div class="page" style="padding-block: var(--space-16)">
+    <h1 class="h1">ASILI Engineering Solutions</h1>
+    <p>Our new website is being built.</p>
+  </div>
+</BaseLayout>
