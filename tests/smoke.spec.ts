@@ -1,15 +1,20 @@
 import { expect, test } from '@playwright/test';
 
-test('home page loads with the company name', async ({ page }) => {
-  await page.goto('/');
-  await expect(page).toHaveTitle(/ASILI Engineering Solutions/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('ASILI');
-});
+// Every page loads with a unique title and doesn't scroll sideways.
+const PAGES = [{ path: '/', title: /ASILI Engineering Solutions/ }];
 
-test('home page has no horizontal scroll', async ({ page }) => {
-  await page.goto('/');
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  );
-  expect(overflow).toBeLessThanOrEqual(0);
-});
+for (const { path, title } of PAGES) {
+  test(`${path} loads with its title and one main heading`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page).toHaveTitle(title);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  });
+
+  test(`${path} has no horizontal scroll`, async ({ page }) => {
+    await page.goto(path);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
