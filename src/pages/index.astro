@@ -1,15 +1,214 @@
 ---
-// Placeholder until feat/home-page replaces it.
+// Home (spec screen 1; mockup "Main" and "HomePhone").
+import { Button } from '../components/Button';
+import { Card } from '../components/Card';
+import { Icon, type IconName } from '../components/Icon';
+import { Photo } from '../components/Photo';
+import { ServiceCard } from '../components/ServiceCard';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, whatsappHref } from '../data/site';
+
+// Hero photo: must be one of ASILI's own finished jobs, in daylight. Never stock (AGENTS.md §6).
+// Put the file in src/assets/photos/ and import it here, e.g.
+//   import heroPhoto from '../assets/photos/hero.jpg';
+// then use getImage() from 'astro:assets' to set `hero` below. Until then the frame says so.
+interface HeroPhoto { src: string; srcSet?: string; width: number; height: number; alt: string }
+const hero = null as HeroPhoto | null;
+
+const branches = site.branches.join(' · ');
+
+const reasons: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'ruler', title: 'Sized by calculation', text: 'We work out the right panels, pump, cables and protection for your real load. Nothing is guessed.' },
+  { icon: 'shield-check', title: 'Every circuit protected', text: 'The right protection on every circuit, so it is safe for your family, workers and equipment.' },
+  { icon: 'clipboard-check', title: 'Tested and commissioned', text: 'We test every circuit and switch the system on with you before we hand it over.' },
+];
+
+const services: { icon: IconName; title: string; text: string; points: string[]; link: string; href: string }[] = [
+  {
+    icon: 'sprout', title: 'Farms', href: '/about#farms', link: 'See farm services',
+    text: 'Solar-powered irrigation pumps, sized for your pump, your water source and your crops.',
+    points: ['Solar irrigation pumps', 'Borehole and river pumping', 'Water every day the sun rises'],
+  },
+  {
+    icon: 'house', title: 'Homes', href: '/about#homes', link: 'See home services',
+    text: 'Wiring and solar power for your home, with every circuit protected and tested.',
+    points: ['House wiring', 'Solar and backup power', 'Every circuit tested'],
+  },
+  {
+    icon: 'factory', title: 'Businesses', href: '/about#businesses', link: 'See business services',
+    text: 'Commercial and industrial installations, sized for the machines you run.',
+    points: ['Shops, offices and workshops', 'Factories and machines', 'Tested and commissioned'],
+  },
+];
 ---
 <BaseLayout
-  title="ASILI Engineering Solutions"
-  description="Licensed electrical engineers in Nairobi, Nakuru and Eldoret. Solar for farm irrigation pumps, homes and businesses: sized, protected, tested and commissioned."
+  title="ASILI Engineering Solutions · Solar and electrical engineers in Kenya"
+  description="Solar irrigation pumps, home wiring and business installations in Nairobi, Nakuru and Eldoret. Sized by calculation, protected, tested and commissioned."
   current="home"
-  noindex
 >
-  <div class="page" style="padding-block: var(--space-16)">
-    <h1 class="h1">ASILI Engineering Solutions</h1>
-    <p>Our new website is being built.</p>
-  </div>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="page">
+      <div class="hero__panel">
+        <div class="hero__copy">
+          <p class="eyebrow hero__eyebrow">
+            <span class="wide-only">Solar and electrical · </span>{branches}
+          </p>
+          <h1 class="hero__title">Power you can rely on. Sized right, tested before handover.</h1>
+          <p class="hero__lead wide-only">
+            We design and install solar and electrical systems for farms, homes and businesses. Every system is sized by
+            calculation, every circuit is protected, and nothing is handed over until it is tested and commissioned.
+          </p>
+          <p class="hero__lead phone-only">
+            Solar and electrical systems for farms, homes and businesses. Protected, tested and commissioned.
+          </p>
+          <div class="hero__actions">
+            <Button size="lg" iconLeft="whatsapp" href={whatsappHref()} fullWidth>WhatsApp us</Button>
+            <Button size="lg" variant="onBrand" iconRight="arrow-right" href="/enquiry" fullWidth>Send an enquiry</Button>
+          </div>
+        </div>
+        {hero
+          ? <Photo src={hero.src} srcSet={hero.srcSet} sizes="(min-width: 960px) 520px, 100vw" width={hero.width} height={hero.height}
+              alt={hero.alt} loading="eager" ratio="var(--hero-ratio)" />
+          : <Photo ratio="var(--hero-ratio)" emptyLabel="No photos uploaded yet" />}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why ASILI -->
+  <section class="section" aria-labelledby="why">
+    <div class="page">
+      <p class="eyebrow section__eyebrow">Why ASILI</p>
+      <h2 id="why" class="section__title">Most installers guess the size. We calculate it.</h2>
+      <div class="cards">
+        {reasons.map(r => (
+          <Card padding={22}>
+            <div class="reason">
+              <span class="reason__tile"><Icon name={r.icon} size={26} /></span>
+              <div class="reason__text">
+                <h3 class="reason__title">{r.title}</h3>
+                <p>{r.text}</p>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section section--white" aria-labelledby="services">
+    <div class="page">
+      <p class="eyebrow section__eyebrow">Farms · Homes · Industry</p>
+      <h2 id="services" class="section__title">Electrical work for farms, homes and businesses</h2>
+      <div class="cards">
+        {services.map(s => (
+          <ServiceCard icon={s.icon} title={s.title} points={s.points} href={s.href} linkLabel={s.link}>{s.text}</ServiceCard>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Websites and apps -->
+  <section class="digital">
+    <div class="page">
+      <Card tone="field" padding={20}>
+        <div class="digital__row">
+          <div class="digital__text">
+            <span class="digital__tile"><Icon name="smartphone" size={24} /></span>
+            <p>We also build websites and mobile apps. Ask us about yours.</p>
+          </div>
+          <Button variant="outline" iconRight="arrow-right" href="/enquiry?service=digital">Ask about a website or app</Button>
+        </div>
+      </Card>
+    </div>
+  </section>
+
+  <!-- Closing call to action -->
+  <section class="closing" aria-labelledby="closing">
+    <div class="page">
+      <div class="closing__panel">
+        <div class="closing__text">
+          <h2 id="closing" class="closing__title">Tell us about your farm, home or business.</h2>
+          <p>Send us a short enquiry and an engineer will call you back.</p>
+        </div>
+        <div class="closing__actions">
+          <Button size="lg" iconLeft="whatsapp" href={whatsappHref()} fullWidth>WhatsApp us</Button>
+          <Button size="lg" variant="onBrand" iconRight="arrow-right" href="/enquiry" fullWidth>Send an enquiry</Button>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .eyebrow { text-transform: uppercase; margin: 0; }
+  .phone-only { display: none; }
+  @media (max-width: 599.98px) {
+    .wide-only { display: none; }
+    .phone-only { display: block; }
+  }
+
+  /* Hero */
+  .hero { padding-top: var(--space-8); --hero-ratio: 4 / 3; }
+  .hero__panel {
+    background: var(--surface-brand); border-radius: var(--radius-xl);
+    padding: clamp(var(--space-8), 5vw, var(--space-16));
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: clamp(var(--space-6), 4vw, var(--space-12)); align-items: center;
+  }
+  .hero__copy { display: flex; flex-direction: column; gap: 18px; }
+  .hero__eyebrow { color: var(--sun-300); }
+  .hero__title { font: var(--weight-bold) clamp(var(--text-3xl), 5vw, var(--text-5xl))/1.05 var(--font-display); color: var(--white); }
+  .hero__lead { color: var(--text-on-brand-muted); max-width: 520px; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-1); }
+  .hero__actions > :global(*) { flex: 1 1 200px; }
+  @media (max-width: 599.98px) {
+    .hero { padding-top: var(--space-3); --hero-ratio: 16 / 9; }
+    .hero__panel { padding: 26px var(--space-5) var(--space-5); gap: 14px; }
+    .hero__copy { gap: 14px; }
+    .hero__title { font-size: 36px; }
+    .hero__actions { flex-direction: column; }
+    .hero__actions > :global(*) { flex: none; }
+  }
+
+  /* Sections */
+  .section { padding: var(--space-16) 0 56px; }
+  .section--white { background: var(--white); padding-bottom: var(--space-16); }
+  .section__eyebrow { color: var(--leaf-600); margin-bottom: 10px; }
+  .section__title { font: var(--weight-bold) clamp(var(--text-2xl), 4vw, var(--text-4xl))/var(--leading-tight) var(--font-display); margin-bottom: var(--space-6); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--space-3); }
+
+  .reason { display: flex; gap: var(--space-4); align-items: flex-start; }
+  .reason__tile, .digital__tile {
+    width: var(--tap-min); height: var(--tap-min); flex: none; border-radius: var(--radius-md);
+    display: grid; place-items: center;
+  }
+  .reason__tile { background: var(--forest-900); color: var(--sun-500); }
+  .reason__text { display: flex; flex-direction: column; gap: var(--space-1); }
+  .reason__title { font: var(--type-h3); }
+  .reason__text p { color: var(--ink-700); }
+
+  /* Websites and apps */
+  .digital { padding-top: var(--space-10); }
+  .digital__row { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; justify-content: space-between; }
+  .digital__text { display: flex; gap: 14px; align-items: center; flex: 1 1 300px; }
+  .digital__text p { font: var(--weight-semibold) var(--text-md)/1.4 var(--font-body); color: var(--ink-900); }
+  .digital__tile { background: var(--white); color: var(--forest-900); }
+  @media (max-width: 599.98px) {
+    .digital__row > :global(.a-btn) { width: 100%; white-space: normal; }
+  }
+
+  /* Closing */
+  .closing { padding: var(--space-12) 0 72px; }
+  .closing__panel {
+    background: var(--surface-brand); border-radius: var(--radius-xl);
+    padding: clamp(var(--space-8), 5vw, var(--space-12)) clamp(22px, 5vw, 56px);
+    display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; justify-content: space-between;
+  }
+  .closing__text { flex: 1 1 320px; display: flex; flex-direction: column; gap: 10px; }
+  .closing__title { font: var(--weight-bold) clamp(var(--text-2xl), 4vw, 44px)/var(--leading-tight) var(--font-display); color: var(--white); }
+  .closing__text p { color: var(--text-on-brand-muted); }
+  .closing__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); flex: 1 1 320px; max-width: 480px; }
+  .closing__actions > :global(*) { flex: 1 1 200px; }
+</style>

@@ -5,6 +5,9 @@ import { Icon } from './Icon';
 export interface PhotoProps {
   src?: string;
   alt?: string;
+  /** Responsive sources, e.g. from getImage() in astro:assets */
+  srcSet?: string;
+  sizes?: string;
   /** Pixel size of the source image, so the browser can reserve space */
   width?: number;
   height?: number;
@@ -29,7 +32,7 @@ export interface PhotoProps {
  * Static port: the design system faded the photo in with JavaScript; here it renders directly.
  */
 export function Photo({
-  src, alt = '', width, height, loading = 'lazy', status, ratio = '4 / 3', radius = 'var(--radius-lg)',
+  src, srcSet, sizes, alt = '', width, height, loading = 'lazy', status, ratio = '4 / 3', radius = 'var(--radius-lg)',
   markSrc = markUrl, emptyLabel, children, style,
 }: PhotoProps) {
   const s = status ?? (children || src ? 'ready' : 'empty');
@@ -37,7 +40,7 @@ export function Photo({
     <div className="a-photo" style={{ aspectRatio: ratio, borderRadius: radius, ...style }}>
       {s === 'ready' && children && <div className="a-photo__fill">{children}</div>}
       {s === 'ready' && !children && src && (
-        <img className="a-photo__img" src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" />
+        <img className="a-photo__img" src={src} srcSet={srcSet} sizes={sizes} alt={alt} width={width} height={height} loading={loading} decoding="async" />
       )}
       {s === 'loading' && (
         <div className="a-photo__center"><Icon name="loader-circle" size={26} color="var(--ink-300)" className="a-spin" /></div>
