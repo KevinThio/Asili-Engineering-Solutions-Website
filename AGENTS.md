@@ -1,0 +1,202 @@
+# AGENTS.md — ASILI Engineering Solutions website
+
+Instructions for any AI coding agent or developer working in this repository. Read this file in full before changing anything.
+
+## 1. What we are building
+
+A three-page company website for **ASILI Engineering Solutions Limited**, a Kenyan firm of licensed electrical engineers (EPRA and EBK certified) with branches in Nairobi, Nakuru and Eldoret.
+
+The site exists to do two things:
+
+1. Show visitors that ASILI **sizes every system by calculation, protects every circuit, and tests and commissions it before handover**.
+2. Let a visitor **send an enquiry in under a minute**, or call or WhatsApp instead.
+
+**Primary user:** a farmer who needs a solar system designed and installed to run an irrigation pump, usually reading on a phone, often outdoors, sometimes on slow mobile data. Homeowners, commercial and industrial clients, and people wanting a website or mobile app are also served, but they do not drive design decisions.
+
+### Source documents (the truth, in this order)
+
+| File | What it decides |
+|---|---|
+| [asili-website-spec.md](asili-website-spec.md) | Screens, data, scope. If code and spec disagree, the spec wins. |
+| [asili-brand-concept.md](asili-brand-concept.md) | Mission, pillars, voice, colours, fonts. |
+| ASILI Design System (Claude artifact, see §6) | Tokens, components, usage rules. Overrides the brand concept on any visual detail. |
+| [asili-engineering-logo.svg](asili-engineering-logo.svg) | The only logo. Never redraw, recolour or approximate it. |
+
+## 2. Scope
+
+**In scope (three screens only):**
+
+- **Home:** main message, the three kinds of electrical work (farms, homes, commercial/industrial), a short mention of websites and mobile apps; Call, WhatsApp, enquiry and About & Services links.
+- **About & Services:** who ASILI is and its qualifications, each service, how ASILI works (design → install → test → commission), and a "Completed projects" strip showing the **newest six** projects.
+- **Enquiry form:** four fields (service needed, name, phone number, problem description) and a "We received your enquiry" message after sending; Call and WhatsApp as alternatives.
+
+**Out of scope. Do not build, even if it seems helpful:**
+
+- Login, admin pages or customer accounts
+- A separate Projects page or per-project detail pages (only once there are more than about six projects)
+- Online prices, quotes, bookings or payments
+- Separate pages for website and mobile app services
+- AI, mechanical, mechatronics or civil engineering services
+- Blog, live chat
+
+If a task seems to need something on this list, stop and ask.
+
+## 3. Stack
+
+| Layer | Choice | Notes |
+|---|---|---|
+| Framework | **Astro** + TypeScript | Static output. Ship as little JavaScript as possible. |
+| Components | **React**, as Astro islands | Ported from the ASILI Design System. Render static by default; hydrate only what must be interactive. |
+| Styling | Design system `tokens.css` + `bundle.css` | Plain CSS custom properties. **No Tailwind, no CSS-in-JS library, no UI kit.** |
+| Icons | `astro-icon` with Lucide, plus a local WhatsApp SVG | Icons are inlined at build time. Never fetch icons from a CDN at runtime. |
+| Fonts | Barlow and Barlow Semi Condensed, self-hosted (Fontsource) | No runtime request to Google Fonts. |
+| Images | Astro `<Image>` / `astro:assets` | Every photo resized and compressed at build. |
+| Enquiry form | **Netlify Forms** | Emails the owner; submissions kept in Netlify as the backup "Enquiries" table. |
+| Projects content | Astro **content collection**, edited through **Decap CMS** at `/admin` | The owner adds projects without touching code. |
+| Hosting | **Netlify**, deploying from `main` on GitHub | Repository: `KevinThio/Asili-Engineering-Solutions-Website`. |
+| Checks | `astro check`, Lighthouse, Playwright for the enquiry form | See §9. |
+
+Do not add a database, server code, authentication, an analytics script or any new dependency without asking first. When adding a dependency is approved, pin an exact version.
+
+## 4. Planned project structure
+
+The project is not scaffolded yet. Create it in this shape and keep to it:
+
+```
+/
+├── AGENTS.md, CLAUDE.md, README.md
+├── asili-website-spec.md, asili-brand-concept.md, asili-engineering-logo.*   (source docs; do not move)
+├── astro.config.mjs, tsconfig.json, package.json, netlify.toml
+├── public/
+│   ├── admin/                  Decap CMS (index.html + config.yml)
+│   ├── fonts/                  only if not served via Fontsource
+│   └── favicon.svg
+└── src/
+    ├── assets/
+    │   ├── logo.svg, logo-mark.svg
+    │   └── projects/           project photos uploaded through the CMS
+    ├── components/             React components ported from the design system (one file each)
+    ├── content/
+    │   ├── config.ts           content collection schemas
+    │   └── projects/           one Markdown file per completed project
+    ├── data/
+    │   └── site.ts             phone numbers, WhatsApp, email, branches, licences: the ONLY place these live
+    ├── layouts/
+    │   └── BaseLayout.astro    <head>, SiteHeader, SiteFooter, ContactBar
+    ├── pages/
+    │   ├── index.astro         Home
+    │   ├── about.astro         About & Services
+    │   ├── enquiry.astro       Enquiry form
+    │   └── thanks.astro        "We received your enquiry" (form success redirect)
+    └── styles/
+        ├── tokens.css          copied from the design system; generated, never edit by hand
+        └── global.css          the design system's bundle.css (fonts, base rules, type scale)
+```
+
+## 5. Data
+
+### Enquiries (written by the form, read by no screen)
+
+| Field | Form name | Rules |
+|---|---|---|
+| Date sent | (added by Netlify) | |
+| Service needed | `service` | One of `farm`, `home`, `commercial`, `digital` |
+| Name | `name` | Required |
+| Phone number | `phone` | Required; at least 9 digits |
+| Problem description | `problem` | Required |
+
+- The form must be a real HTML `<form>` with `data-netlify="true"`, a `name="enquiry"` attribute and a honeypot field, so it **works without JavaScript**. JavaScript may enhance it (inline validation, no page reload) but must never be required to send.
+- Netlify emails each submission to the owner. Never put an email address or API key in client code.
+
+### Projects (read by About & Services, written only by the owner through the CMS)
+
+Schema for `src/content/projects/*.md` (enforce it in `src/content/config.ts` with Zod):
+
+| Field | Type | Notes |
+|---|---|---|
+| `title` | string | Required |
+| `type` | `farm` \| `home` \| `commercial` | Drives the badge (Farm / Home / Business) |
+| `location` | string | Town, county |
+| `description` | string | One line on what was installed |
+| `photo` | image, optional | ASILI's own job photo. Never stock. |
+| `completed` | date | Used to pick the newest six |
+
+- About & Services shows the **six newest** projects by `completed`, newest first.
+- **No projects yet** → show the design system's `EmptyState`: "Photos of our recent work are coming soon", with a WhatsApp button.
+- **A project without a photo** → show the photo frame with the text **"No photos uploaded yet"**. Never fill it with a stock or placeholder image.
+- Never invent projects, locations, capacities or results. Missing facts stay empty or become a clearly marked `[PLACEHOLDER]` that is reported in your reply.
+
+## 6. Design system: follow it exactly
+
+The **ASILI Design System** lives as a Claude artifact: https://claude.ai/artifact/W58deHpF3KokhsJhc51oJv
+
+- `project/tokens.json` is the single source of every colour, type style, spacing step, size, radius and shadow. `project/tokens.css` is generated from it.
+- `project/components/<Name>/` holds each component's guide (`README.md`), types and live preview; the React sources are under `project/components/<group>/<Name>.jsx`.
+- Port components from those sources. Do not redesign them. Components available: Button, IconButton, Icon, Badge, Card, ListRow, Photo, ProjectCard, ServiceCard, StepList, Alert, EmptyState, TextField, TextArea, Select, ServicePicker, SiteHeader, ContactBar, SiteFooter.
+- If you need a value or component the design system lacks, ask before inventing one.
+
+### Visual rules that are easy to break
+
+- **Use tokens, never raw values.** Write `var(--forest-900)`, `var(--space-6)`, `var(--radius-lg)`, never `#1E3A17`, `24px` or `16px` for something a token covers.
+- **One sun-yellow button per screen.** `--sun-500` is reserved for the single main action ("WhatsApp us" or "Send an enquiry"). Everything else is secondary, outline or ghost.
+- **The logo always sits on white or field green**, never on forest green. On dark backgrounds, set "ASILI" in Barlow Semi Condensed Bold, white.
+- **Headlines** in Barlow Semi Condensed Bold (`--font-display`); **body** in Barlow (`--font-body`) at **18px**.
+- **Photos are ASILI's own finished jobs in daylight. Never stock images.**
+- Flat colour only: no gradients, textures or patterns. No coloured left-border cards. No emoji.
+- Corner radii: 6 (icon tiles), 10 (buttons, inputs), 16 (cards), 24 (hero blocks), pill (badges).
+- Motion: 120–200 ms colour and shadow transitions only. No entrance animations, no parallax.
+
+## 7. Writing on the site (voice)
+
+ASILI sounds like a **qualified engineer talking to a neighbour**: plain, direct, warm. Short sentences. Technical terms explained or left out. Every claim is about what the customer gets (water on the crops, lights that stay on, machines that keep running).
+
+- Speak as "we" to "you".
+- Sentence case for headlines and buttons ("Send an enquiry", "WhatsApp us"). "ASILI" is always all caps.
+- Buttons are a verb plus an object: "WhatsApp us", "Call", "Send enquiry", "Ask about this".
+- **Always use:** sized, protected, tested, commissioned, reliable.
+- **Never use:** cheap, roughly, quick fix, world-class, cutting-edge.
+- Fixed messages: success "We received your enquiry"; warning "Check this field"; error "Something is missing". Always say what to do next.
+- Numbers only when they are real.
+
+## 8. Quality bar (every page, every change)
+
+**Phone first.** Design and test at 360–390 px width before desktop. No horizontal scrolling. Page content max 1160 px; form max 680 px; 20 px side gutters.
+
+**Fast on slow data.** Target Lighthouse mobile ≥ 95 for Performance, Accessibility, Best Practices and SEO. Keep each page under about 300 KB on first load, excluding photos that are below the fold. Lazy-load images below the fold; give every image width and height.
+
+**Accessible.**
+- Text contrast at least 4.5:1 (3:1 for 24 px+ text, borders, focus rings and icons). The design system's pairs already pass; do not invent new ones.
+- Tap targets at least 48 px.
+- Real `<button>`, `<a href>`, `<label>` + `<input>`; never a clickable `<div>`.
+- Visible focus ring (`--focus-ring`) on every interactive element.
+- Icon-only buttons have an `aria-label`; decorative icons are `aria-hidden="true"`.
+- Every form error is announced and tied to its field (`aria-describedby`).
+
+**Contact is always one tap away.** Call (`tel:`) and WhatsApp (`https://wa.me/<digits>`) links are on every page; on phones the `ContactBar` is fixed at the bottom. All numbers come from `src/data/site.ts`.
+
+**SEO basics.** A unique `<title>` and meta description per page, Open Graph tags, `lang="en"`, a sitemap, and `LocalBusiness` structured data with the three branches.
+
+## 9. Commands
+
+Not available until the project is scaffolded. Once it is, keep this table accurate:
+
+| Command | Does |
+|---|---|
+| `npm install` | Install dependencies |
+| `npm run dev` | Local dev server |
+| `npm run build` | Production build into `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run check` | `astro check` (types and templates) |
+| `npm run test` | Playwright tests (enquiry form: empty submit shows errors; valid submit reaches "We received your enquiry") |
+
+Before saying a task is done: `npm run check` and `npm run build` pass, the page has been looked at in the browser at phone width, and the form still works with JavaScript turned off.
+
+## 10. Working rules
+
+- **Small, focused changes.** One page or component per change. Do not reformat or refactor unrelated code.
+- **Plain English in commits.** Short imperative subject ("Add enquiry form validation"), body explaining why when it isn't obvious.
+- **Branches:** do not commit straight to `main` for feature work; branch, then open a pull request. Commit or push only when asked.
+- **Never commit secrets.** No keys, tokens or personal data in the repository. Contact details that appear on the public site are fine and live only in `src/data/site.ts`.
+- **Don't touch the source documents** (spec, brand concept, logo) unless asked.
+- **Ask before:** adding a dependency, changing the stack, adding a page, changing a design token, or anything listed as out of scope.
+- **Report honestly.** If a check fails or something was skipped, say so. Do not claim the site works on a phone unless it was checked at phone width.
