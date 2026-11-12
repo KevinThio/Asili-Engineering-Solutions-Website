@@ -77,8 +77,8 @@ The scaffold exists (config, a placeholder `src/pages/index.astro`, `tests/`, CI
     │   ├── logo.svg, logo-mark.svg
     │   └── projects/           project photos uploaded through the CMS
     ├── components/             React components ported from the design system (one file each), plus icon-data.ts (generated)
+    ├── content.config.ts       content collection schemas (Astro 7 location)
     ├── content/
-    │   ├── config.ts           content collection schemas
     │   └── projects/           one Markdown file per completed project
     ├── data/
     │   └── site.ts             phone numbers, WhatsApp, email, branches, licences: the ONLY place these live
@@ -112,7 +112,7 @@ The scaffold exists (config, a placeholder `src/pages/index.astro`, `tests/`, CI
 
 ### Projects (read by About & Services, written only by the owner through the CMS)
 
-Schema for `src/content/projects/*.md` (enforce it in `src/content/config.ts` with Zod):
+Schema for `src/content/projects/*.md` (enforced in `src/content.config.ts` with Zod):
 
 | Field | Type | Notes |
 |---|---|---|
