@@ -48,6 +48,24 @@ Only real, finished ASILI jobs, with our own daylight photos. A project with no 
 
 To try the editor on your own computer without signing in: run `npx decap-server` in one terminal and `npm run dev` in another, then open http://localhost:4321/admin/. Changes are written straight to your local files.
 
+## Deploying on Netlify
+
+The site deploys from GitHub. `netlify.toml` already sets the build command, Node version and security headers.
+
+**First deploy (no custom domain yet):**
+
+1. In Netlify: **Add new site → Import an existing project → GitHub** and choose `KevinThio/Asili-Engineering-Solutions-Website`. Netlify reads the build settings from `netlify.toml`.
+2. Site configuration → Build & deploy → Branches and deploy contexts:
+   - **Production branch:** `prod` (the live site)
+   - **Branch deploys:** add `main`, the staging copy at `main--<name>.netlify.app`
+   - **Deploy previews:** on, for pull requests
+3. Site configuration → Site details → **Change site name**, e.g. `asili-engineering`, so the address is `https://asili-engineering.netlify.app`.
+4. **Forms:** after the first deploy, Netlify finds the `enquiry` form. Go to Forms → enable form detection if asked, then Forms → **Form notifications → Add notification → Email notification** with the address that should receive enquiries. Every enquiry is also kept under Forms → enquiry.
+5. **CMS sign-in:** see "Adding projects" above.
+6. Send a real test enquiry from your phone and check that the email arrives.
+
+Netlify sets the `URL` variable on every build, so canonical links, the sitemap and link previews use the live address automatically. When a domain is bought, add it under Domain management; the next deploy uses it.
+
 ## Branches and releases
 
 - Work on a feature branch from `main` (`feat/...`, `fix/...`, `chore/...`) and open a pull request into `main`.

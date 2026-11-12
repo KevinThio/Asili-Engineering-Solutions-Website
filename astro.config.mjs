@@ -14,5 +14,25 @@ const devStyleguide = {
 };
 
 export default defineConfig({
+  // The live address, for canonical links, the sitemap and link previews. Netlify sets URL on every
+  // build (the netlify.app address now, the custom domain once it is added). Unset locally.
+  site: process.env.URL || undefined,
   integrations: [react(), devStyleguide],
+  security: {
+    // Content Security Policy as a <meta> tag on every page. Astro hashes its own inline scripts and
+    // styles; style="" attributes are allowed because the design system components use them.
+    // /admin (Decap) is a plain file in public/ and is not covered.
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        "connect-src 'self'",
+        "form-action 'self'",
+        "base-uri 'self'",
+        "object-src 'none'",
+      ],
+      styleDirective: { resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }] },
+    },
+  },
 });
