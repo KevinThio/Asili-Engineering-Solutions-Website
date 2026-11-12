@@ -4,6 +4,8 @@ import { expect, test } from '@playwright/test';
 const PAGES = [
   { path: '/', title: /ASILI Engineering Solutions/ },
   { path: '/about', title: /^About & Services · ASILI/ },
+  { path: '/enquiry', title: /^Send an enquiry · ASILI/ },
+  { path: '/thanks', title: /^We received your enquiry · ASILI/ },
 ];
 
 for (const { path, title } of PAGES) {
