@@ -1,0 +1,75 @@
+# Decap CMS: the owner adds completed projects here, at /admin.
+# Each project becomes a Markdown file in src/content/projects/ (schema: src/content.config.ts),
+# committed to GitHub. Netlify then rebuilds the site.
+#
+# Sign-in: GitHub, through Netlify's OAuth service (set up once; see README "Adding projects").
+backend:
+  name: github
+  repo: KevinThio/Asili-Engineering-Solutions-Website
+  branch: main
+  commit_messages:
+    create: 'Add project: {{slug}}'
+    update: 'Update project: {{slug}}'
+    delete: 'Remove project: {{slug}}'
+    uploadMedia: 'Upload project photo: {{path}}'
+    deleteMedia: 'Remove project photo: {{path}}'
+
+# `npx decap-server` lets you try the editor on your own computer without signing in.
+local_backend: true
+
+# Photos go next to the other site images so they are resized and compressed at build.
+media_folder: src/assets/projects
+# How the Markdown file refers to a photo (relative to src/content/projects/)
+public_folder: ../../assets/projects
+
+site_url: /
+display_url: /about#projects
+logo_url: /favicon.svg
+
+collections:
+  - name: projects
+    label: Completed projects
+    label_singular: Project
+    description: >-
+      Real ASILI jobs only, never stock photos. The About & Services page shows the six newest.
+    folder: src/content/projects
+    create: true
+    delete: true
+    slug: '{{year}}-{{month}}-{{slug}}'
+    summary: '{{title}} · {{location}} · {{completed}}'
+    sortable_fields: ['completed', 'title']
+    extension: md
+    format: frontmatter
+    fields:
+      - label: Title
+        name: title
+        widget: string
+        hint: 'What the job was, e.g. "Solar pump for a tomato farm"'
+      - label: Type of work
+        name: type
+        widget: select
+        options:
+          - { label: Farm, value: farm }
+          - { label: Home, value: home }
+          - { label: Business (commercial or industrial), value: commercial }
+      - label: Location
+        name: location
+        widget: string
+        hint: 'Town, county, e.g. "Gilgil, Nakuru"'
+      - label: What we installed
+        name: description
+        widget: string
+        hint: One line on what was installed. Only real numbers.
+      - label: Photo
+        name: photo
+        widget: image
+        required: false
+        hint: Our own photo of the finished job, taken in daylight. Leave empty if you have none yet.
+        choose_url: false
+      - label: Date completed
+        name: completed
+        widget: datetime
+        format: YYYY-MM-DD
+        date_format: DD/MM/YYYY
+        time_format: false
+        picker_utc: true
