@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 // Every page loads with a unique title and doesn't scroll sideways.
-const PAGES = [{ path: '/', title: /ASILI Engineering Solutions/ }];
+const PAGES = [
+  { path: '/', title: /ASILI Engineering Solutions/ },
+  { path: '/about', title: /^About & Services · ASILI/ },
+];
 
 for (const { path, title } of PAGES) {
   test(`${path} loads with its title and one main heading`, async ({ page }) => {

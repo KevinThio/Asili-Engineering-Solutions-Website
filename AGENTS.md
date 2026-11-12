@@ -92,7 +92,8 @@ The scaffold exists (config, a placeholder `src/pages/index.astro`, `tests/`, CI
     └── styles/
         ├── tokens.css          copied from the design system; generated, never edit by hand
         ├── global.css          the design system's bundle.css (fonts, base rules, type scale)
-        └── components.css      the components' styles, ported from their inline styles so they work without JavaScript
+        ├── components.css      the components' styles, ported from their inline styles so they work without JavaScript
+        └── page.css            page blocks shared by the screens (hero, sections, panels, closing call to action)
 ```
 
 ## 5. Data

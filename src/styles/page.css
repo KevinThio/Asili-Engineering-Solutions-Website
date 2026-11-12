@@ -1,0 +1,59 @@
+/* Page building blocks shared by Home, About & Services and Enquiry (from the agreed mockup).
+   Tokens only; values the mockup used between tokens are noted. */
+
+.page { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--page-gutter); }
+.page--form { max-width: calc(var(--content-max) + 2 * var(--page-gutter)); }
+
+.eyebrow { text-transform: uppercase; margin: 0; }
+.phone-only { display: none; }
+@media (max-width: 599.98px) {
+  .wide-only { display: none; }
+  .phone-only { display: block; }
+}
+
+/* Forest hero panel at the top of a page */
+.hero { padding-top: var(--space-8); }
+.hero__panel {
+  background: var(--surface-brand); border-radius: var(--radius-xl);
+  padding: clamp(var(--space-8), 5vw, var(--space-16));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: clamp(var(--space-6), 4vw, var(--space-12)); align-items: center;
+}
+.hero__copy { display: flex; flex-direction: column; gap: 18px; }
+.hero__eyebrow { color: var(--sun-300); }
+.hero__title { font: var(--weight-bold) clamp(var(--text-3xl), 5vw, var(--text-5xl))/1.05 var(--font-display); color: var(--white); }
+.hero__lead { color: var(--text-on-brand-muted); max-width: 540px; }
+@media (max-width: 599.98px) {
+  .hero { padding-top: var(--space-3); }
+  .hero__panel { padding: 26px var(--space-5) var(--space-5); gap: 14px; }
+  .hero__copy { gap: 14px; }
+  .hero__title { font-size: 36px; }
+}
+
+/* Content sections */
+.section { padding: var(--space-16) 0 56px; }
+.section--white { background: var(--white); padding-bottom: var(--space-16); }
+.section__eyebrow { color: var(--leaf-600); margin-bottom: 10px; }
+.section__title { font: var(--weight-bold) clamp(var(--text-2xl), 4vw, var(--text-4xl))/var(--leading-tight) var(--font-display); margin-bottom: var(--space-6); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--space-3); }
+/* Wrapper for a card that needs an id (a link target); the card fills it */
+.cards__slot { display: grid; scroll-margin-top: 96px; }
+
+/* A pair of large buttons that sit side by side, or stack on a phone */
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.actions > * { flex: 1 1 200px; }
+
+/* Forest panel inside a section (How we work, closing call to action) */
+.panel {
+  background: var(--surface-brand); border-radius: var(--radius-xl);
+  padding: clamp(var(--space-8), 5vw, var(--space-12)) clamp(22px, 5vw, 56px);
+}
+.panel__eyebrow { color: var(--sun-300); margin-bottom: 10px; }
+.panel__title { font: var(--weight-bold) clamp(var(--text-2xl), 4vw, 44px)/var(--leading-tight) var(--font-display); color: var(--white); }
+
+/* Closing call to action at the foot of a page */
+.closing { padding: var(--space-12) 0 72px; }
+.closing .panel { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; justify-content: space-between; }
+.closing__text { flex: 1 1 320px; display: flex; flex-direction: column; gap: 10px; }
+.closing__text p { color: var(--text-on-brand-muted); }
+.closing .actions { flex: 1 1 320px; max-width: 480px; }
