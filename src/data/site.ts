@@ -24,6 +24,8 @@ export const site = {
   email: 'asiliengineering@gmail.com',
 
   branches: ['Nairobi', 'Nakuru', 'Eldoret'],
+  /** Main branch (the Nakuru branch, in Gilgil). No street address yet: only what we know. */
+  mainBranch: { town: 'Gilgil', county: 'Nakuru County', countryCode: 'KE', country: 'Kenya' },
 
   contacts: [
     { name: 'Eng. Kevin Maina', role: 'Director', phone: '+254 792 961 341', tel: '+254792961341' },

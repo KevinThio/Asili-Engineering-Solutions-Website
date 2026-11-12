@@ -9,6 +9,10 @@ import { SiteFooter } from '../components/SiteFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { NAV_LINKS, type PageId } from '../data/nav';
 import { site } from '../data/site';
+import { localBusiness } from '../data/seo';
+import { getImage } from 'astro:assets';
+// The logo on white (allowed: the logo always sits on white or field green), for link previews
+import logoJpg from '../../asili-engineering-logo.jpg';
 
 interface Props {
   /** Unique per page. " · ASILI Engineering Solutions" is added unless it already names ASILI. */
@@ -24,6 +28,10 @@ interface Props {
 const { title, description, current, noindex = false } = Astro.props;
 const fullTitle = title.includes('ASILI') ? title : `${title} · ${site.shortName}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const ogImage = await getImage({ src: logoJpg, width: 1200, format: 'jpg', quality: 80 });
+const ogImageUrl = Astro.site ? new URL(ogImage.src, Astro.site).href : undefined;
+const structuredData = JSON.stringify(localBusiness(Astro.site, ogImageUrl));
+const footerLocation = `Main branch in ${site.mainBranch.town}, ${site.mainBranch.county}. Also in ${site.branches.slice(0, -1).join(", ")} and ${site.branches.at(-1)}.`;
 ---
 <!doctype html>
 <html lang="en">
@@ -43,6 +51,10 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="en_KE" />
     {canonical && <meta property="og:url" content={canonical} />}
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    {ogImageUrl && <meta property="og:image:alt" content="ASILI Engineering Solutions Limited logo" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline type="application/ld+json" set:html={structuredData} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -55,7 +67,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
       whatsappLabel={site.whatsappLabel}
       whatsapp={site.whatsapp}
       email={site.email}
-      location={site.branches.join(' · ')}
+      location={footerLocation}
       registration={site.registration}
       tagline={site.tagline}
       links={NAV_LINKS}
