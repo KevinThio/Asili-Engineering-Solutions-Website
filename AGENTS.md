@@ -45,8 +45,9 @@ If a task seems to need something on this list, stop and ask.
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Framework | **Astro** + TypeScript | Static output. Ship as little JavaScript as possible. |
-| Components | **React**, as Astro islands | Ported from the ASILI Design System. Render static by default; hydrate only what must be interactive. |
+| Runtime | **Node.js 26** (minimum 22.23.4) | Pinned in `.nvmrc` and `netlify.toml`. |
+| Framework | **Astro 7** + TypeScript 6 | Static output. Ship as little JavaScript as possible. TypeScript stays on 6 because `@astrojs/check` does not support 7 yet. |
+| Components | **React 19**, as Astro islands | Ported from the ASILI Design System (written for React 18; plain function components that run unchanged on 19). Render static by default; hydrate only what must be interactive. |
 | Styling | Design system `tokens.css` + `bundle.css` | Plain CSS custom properties. **No Tailwind, no CSS-in-JS library, no UI kit.** |
 | Icons | `astro-icon` with Lucide, plus a local WhatsApp SVG | Icons are inlined at build time. Never fetch icons from a CDN at runtime. |
 | Fonts | Barlow and Barlow Semi Condensed, self-hosted (Fontsource) | No runtime request to Google Fonts. |
@@ -58,9 +59,9 @@ If a task seems to need something on this list, stop and ask.
 
 Do not add a database, server code, authentication, an analytics script or any new dependency without asking first. When adding a dependency is approved, pin an exact version.
 
-## 4. Planned project structure
+## 4. Project structure
 
-The project is not scaffolded yet. Create it in this shape and keep to it:
+The scaffold exists (config, a placeholder `src/pages/index.astro`, `tests/`, CI). Build out the rest in this shape and keep to it:
 
 ```
 /
@@ -178,16 +179,20 @@ ASILI sounds like a **qualified engineer talking to a neighbour**: plain, direct
 
 ## 9. Commands
 
-Not available until the project is scaffolded. Once it is, keep this table accurate:
+Requires Node.js 22.23.4 or newer (the project uses 26; see `.nvmrc`). Keep this table accurate:
 
 | Command | Does |
 |---|---|
 | `npm install` | Install dependencies |
-| `npm run dev` | Local dev server |
+| `npm run dev` | Local dev server at http://localhost:4321 |
 | `npm run build` | Production build into `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run check` | `astro check` (types and templates) |
-| `npm run test` | Playwright tests (enquiry form: empty submit shows errors; valid submit reaches "We received your enquiry") |
+| `npm test` | Playwright tests on a phone (Pixel 7) and desktop Chrome; builds and serves the site first. First run on a machine: `npx playwright install chromium` |
+
+Tests live in `tests/`. Every page gets at least a load test and a no-horizontal-scroll test; the enquiry form also gets "empty submit shows errors" and "valid submit reaches We received your enquiry".
+
+CI (`.github/workflows/ci.yml`) runs check, build and tests on every pull request into `main` or `prod`.
 
 Before saying a task is done: `npm run check` and `npm run build` pass, the page has been looked at in the browser at phone width, and the form still works with JavaScript turned off.
 
