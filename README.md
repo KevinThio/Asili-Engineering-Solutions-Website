@@ -24,7 +24,10 @@ npm run dev        # http://localhost:4321
 | `npm run build` | Production build into `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run check` | Type and template check (`astro check`) |
+| `npm run icons` | Rebuild the icon set after adding a name to `scripts/icons.mjs` |
 | `npm test` | Playwright tests on a phone and a desktop browser (builds first) |
+
+While `npm run dev` is running, http://localhost:4321/styleguide shows every design system component. It is not built or deployed.
 
 The first time you run tests on a machine, install the browser: `npx playwright install chromium`.
 

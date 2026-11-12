@@ -1,0 +1,182 @@
+---
+// Dev-only page (see astro.config.mjs): every ported design system component, for checking
+// against the design system artifact. Not part of the site.
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/components.css';
+import { site } from '../data/site';
+import { Alert } from '../components/Alert';
+import { Badge } from '../components/Badge';
+import { Button } from '../components/Button';
+import { Card } from '../components/Card';
+import { ContactBar } from '../components/ContactBar';
+import { EmptyState } from '../components/EmptyState';
+import { Icon } from '../components/Icon';
+import { IconButton } from '../components/IconButton';
+import { ListRow } from '../components/ListRow';
+import { Photo } from '../components/Photo';
+import { ProjectCard } from '../components/ProjectCard';
+import { Select } from '../components/Select';
+import { ServiceCard } from '../components/ServiceCard';
+import { ServicePicker } from '../components/ServicePicker';
+import { SiteFooter } from '../components/SiteFooter';
+import { SiteHeader } from '../components/SiteHeader';
+import { StepList } from '../components/StepList';
+import { TextArea } from '../components/TextArea';
+import { TextField } from '../components/TextField';
+
+const links = [
+  { id: 'home', label: 'Home', href: '/' },
+  { id: 'about', label: 'About & Services', href: '/about' },
+  { id: 'enquiry', label: 'Send an enquiry', href: '/enquiry' },
+];
+const location = site.branches.join(' · ');
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Styleguide · ASILI</title>
+    <style>
+      main { max-width: var(--page-max); margin: 0 auto; padding: var(--space-8) var(--page-gutter) 140px; display: flex; flex-direction: column; gap: var(--space-12); }
+      section { display: flex; flex-direction: column; gap: var(--space-4); }
+      .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+      .grid { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+      .brand { background: var(--surface-brand); padding: var(--space-6); border-radius: var(--radius-xl); }
+      .form { max-width: var(--content-max); display: flex; flex-direction: column; gap: var(--space-5); }
+    </style>
+  </head>
+  <body>
+    <SiteHeader links={links} current="home" tel={site.tel} whatsapp={site.whatsapp} />
+    <main>
+      <section>
+        <p class="eyebrow">Dev only</p>
+        <h1 class="h1">Design system components</h1>
+        <p>Ported from the ASILI Design System. Compare with the artifact's previews.</p>
+      </section>
+
+      <section>
+        <h2 class="h2">Header layouts</h2>
+        <div style="overflow-x:auto; min-width:0"><SiteHeader links={links} current="about" tel={site.tel} whatsapp={site.whatsapp} compact={false} /></div>
+        <SiteHeader links={links} current="about" tel={site.tel} whatsapp={site.whatsapp} compact />
+      </section>
+
+      <section>
+        <h2 class="h2">Button</h2>
+        <div class="row">
+          <Button iconLeft="whatsapp">WhatsApp us</Button>
+          <Button variant="secondary" iconLeft="phone">Call</Button>
+          <Button variant="outline" iconRight="arrow-right">About & Services</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="secondary" loading>Sending</Button>
+          <Button variant="outline" disabled>Disabled</Button>
+        </div>
+        <div class="row">
+          <Button variant="secondary" size="sm">Small</Button>
+          <Button variant="secondary" size="md">Medium</Button>
+          <Button variant="secondary" size="lg">Large</Button>
+        </div>
+        <div class="brand row"><Button variant="onBrand" iconLeft="phone">Call</Button></div>
+      </section>
+
+      <section>
+        <h2 class="h2">IconButton and Icon</h2>
+        <div class="row">
+          <IconButton icon="menu" label="Open menu" />
+          <IconButton icon="phone" label="Call" variant="secondary" />
+          <IconButton icon="x" label="Close" variant="ghost" />
+          <IconButton icon="whatsapp" label="WhatsApp us" variant="whatsapp" />
+          <Icon name="sun" size={32} color="var(--sun-600)" />
+          <Icon name="zap" size={32} />
+          <Icon name="droplets" size={32} color="var(--leaf-600)" />
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h2">Badge</h2>
+        <div class="row">
+          <Badge tone="farm" /><Badge tone="home" /><Badge tone="commercial" /><Badge tone="digital" />
+          <Badge tone="neutral">Nakuru</Badge><Badge tone="success">Tested</Badge>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h2">Card</h2>
+        <div class="grid">
+          <Card><p>White card</p></Card>
+          <Card tone="field"><p>Field card</p></Card>
+          <Card tone="brand" elevated><p>Brand card, elevated</p></Card>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h2">ServiceCard</h2>
+        <div class="grid">
+          <ServiceCard icon="sprout" title="Farms" href="/enquiry" points={['Solar pumps sized to your borehole', 'Protected against surges', 'Tested before handover']}>
+            Solar power for irrigation pumps.
+          </ServiceCard>
+          <ServiceCard icon="house" title="Homes">Wiring and solar power that stays on.</ServiceCard>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h2">ProjectCard and Photo</h2>
+        <div class="grid">
+          <ProjectCard title="Solar pump for irrigation" type="farm" location="[PLACEHOLDER] Town, County" description="[PLACEHOLDER] One line on what was installed." />
+          <ProjectCard loading />
+          <Photo emptyLabel="No photos uploaded yet" />
+          <Photo status="error" />
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h2">StepList</h2>
+        <StepList />
+        <div class="brand"><StepList onBrand /></div>
+      </section>
+
+      <section>
+        <h2 class="h2">ListRow</h2>
+        <div>
+          {site.contacts.map(c => <ListRow icon="phone" title={c.phone} meta={`${c.name}, ${c.role}`} href={`tel:${c.tel}`} />)}
+          <ListRow icon="badge-check" iconTone="success" title="EPRA licensed" meta="Energy and Petroleum Regulatory Authority" />
+          <ListRow icon="check" iconTone="none" title="Bare icon row" divider={false} />
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h2">Alert</h2>
+        <Alert tone="success" title="We received your enquiry">We will call you back. Need us sooner? Call or WhatsApp us.</Alert>
+        <Alert tone="warning" title="Check this field">The phone number needs at least 9 digits.</Alert>
+        <Alert tone="error" title="Something is missing">Fill in the fields marked in red, then send again.</Alert>
+        <Alert tone="info" title="Good to know">We work in Nairobi, Nakuru and Eldoret.</Alert>
+      </section>
+
+      <section>
+        <h2 class="h2">EmptyState</h2>
+        {/* In .astro files, pass React node props (action) through a named slot, not as a JSX prop */}
+        <EmptyState icon="sun" title="Photos of our recent work are coming soon">
+          Ask us about a job like yours.
+          <Button slot="action" iconLeft="whatsapp" href={`https://wa.me/${site.whatsapp}`}>WhatsApp us</Button>
+        </EmptyState>
+      </section>
+
+      <section>
+        <h2 class="h2">Form fields</h2>
+        <form class="form" onsubmit="return false">
+          <ServicePicker defaultValue="farm" />
+          <ServicePicker id="service-err" name="service-err" error="Something is missing. Choose a service." />
+          <TextField id="name" name="name" label="Your name" autoComplete="name" required />
+          <TextField id="phone" name="phone" label="Phone number" type="tel" inputMode="tel" hint="We'll call you back on this number." />
+          <TextField id="phone-warn" label="Phone number" type="tel" defaultValue="0712" warning="Check this field. Phone numbers have at least 9 digits." />
+          <TextArea id="problem" name="problem" label="What do you need?" error="Something is missing. Tell us what you need." />
+          <Select id="branch" label="Nearest branch" placeholder="Choose a branch" options={site.branches.map(b => ({ value: b.toLowerCase(), label: b }))} />
+        </form>
+      </section>
+    </main>
+    <SiteFooter contacts={site.contacts} whatsappLabel={site.whatsappLabel} whatsapp={site.whatsapp} email={site.email}
+      location={location} registration={site.registration} tagline={site.tagline} links={links} />
+    <ContactBar tel={site.tel} whatsapp={site.whatsapp} />
+  </body>
+</html>

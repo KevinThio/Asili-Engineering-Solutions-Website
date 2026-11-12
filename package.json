@@ -12,16 +12,20 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "playwright test"
+    "test": "playwright test",
+    "icons": "node scripts/icons.mjs"
   },
   "dependencies": {
     "@astrojs/react": "7.1.8",
+    "@fontsource/barlow": "5.3.0",
+    "@fontsource/barlow-semi-condensed": "5.3.0",
     "astro": "7.4.11",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "@iconify-json/lucide": "1.2.148",
     "@playwright/test": "1.65.0",
     "@types/node": "26.6.6",
     "@types/react": "19.3.0",
