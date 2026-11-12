@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 // The shared layout (header, footer, Call/WhatsApp bar) on every page.
-const PAGES = ['/'];
+const PAGES = ['/', '/about'];
 
 for (const path of PAGES) {
   test(`${path} has the header, footer and contact links`, async ({ page }) => {
